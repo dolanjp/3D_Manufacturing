@@ -1,0 +1,149 @@
+%YAML 1.1
+---
+ANONYMOUS:
+  
+  ElementBlocks: 
+    #if an SLM_Additive process is being simulated, Powder_Region must be specified
+    Powder_Region: 
+      material: Powder_IN718
+    Solid_Region_1: 
+      material: Solid_IN718
+   #Solid_Region_2:
+   #  material: 
+  Materials: 
+  
+    Powder_IN718:
+      Category: Powder_IN718
+      Thermal Conductivity: 
+        #Constant thermal conductivity in the powder
+        a: 0.5
+        b: 0.0
+        c: 0.0
+        d: 0.0
+        e: 0.0
+        Thermal Conductivity Liquid: 29.6
+        Thermal Conductivity Vapor:
+      rho_Cp: 
+        Value: 4.438e+06
+      Porosity: 
+        Value: 0.652
+      Initial Psi1: 
+        Psi1: 0.0
+      Initial Psi2: 
+        Psi2: 0.0
+      Laser Source: 
+        #Extinction coefficient computed in the model for powders
+        Extinction coefficient: 0.0
+        Reflectivity: 0.7
+      Initial Phi1: 
+        Melting Temperature: 1571.0
+        delta Temperature: 152.0
+      Initial Phi2: 
+        Vapourization Temperature: 
+        delta Temperature: 152.0
+      Phase Change Properties: 
+        Volumetric Heat Capacity Liquid Value: 5.247e+06
+        Latent Heat Value: 1.588e+09
+        Latent Heat of Vapourization: 
+        Volumetric Heat Capacity Vapour:
+        
+    Solid_IN718:
+      Category: Solid_IN718
+      Thermal Conductivity: 
+        #Linear thermal conductivity in solid IN718
+        a: 4.69
+        b: 0.0179
+        c: 0.0
+        d: 0.0
+        e: 0.0
+        Thermal Conductivity Liquid: 29.6
+        Thermal Conductivity Vapor: 
+      rho_Cp: 
+        Value: 4.438e+06
+      Porosity: 
+        Value: 0.652
+      Initial Psi1: 
+        Psi1: 0.0
+      Initial Psi2: 
+        Psi2: 0.0
+      Laser Source: 
+        Extinction coefficient: 0.0
+        Reflectivity: 0.7
+      Initial Phi1: 
+        Melting Temperature: 1571.0
+        delta Temperature: 152.0
+      Initial Phi2: 
+        Vapourization Temperature: 
+        delta Temperature: 152.0
+      Phase Change Properties: 
+        Volumetric Heat Capacity Liquid Value: 5.247e+06
+        Latent Heat Value: 1.588e+09
+        Latent Heat of Vapourization: 
+        Volumetric Heat Capacity Vapour:
+ 
+    Powder_316:
+
+    Solid_316:
+
+    SiO2: 
+      Category: SiO2
+      Thermal Conductivity: 
+        a: 2.71
+        b: 0.0
+        c: 0.0
+        d: 25026.0
+        e: 5519600.0
+        Thermal Conductivity Liquid: 50.0
+        Thermal Conductivity Vapor: 50.0
+      rho_Cp: 
+        Value: 1.89e6
+      Initial Psi1: 
+        Psi1: 0.0
+      Initial Psi2: 
+        Psi2: 0.0
+      Laser Source: 
+        Extinction coefficient: 75000.0
+        Reflectivity: 0.1
+      Initial Phi1: 
+        Melting Temperature: 1414000.0
+        delta Temperature: 150.0
+      Initial Phi2: 
+        Vapourization Temperature: 3265000.0
+        delta Temperature: 150.0
+      Phase Change Properties: 
+        Volumetric Heat Capacity Liquid: 1.89e6
+        Latent Heat of Melting: 387.0e6
+        Latent Heat of Vapourization: 26.47e9
+        Volumetric Heat Capacity Vapour: 1.89e6
+
+    Si: 
+      Category: Si
+      Thermal Conductivity: 
+        a: 2.71
+        b: 0.0
+        c: 0.0
+        d: 25026.0
+        e: 5519600.0
+        Thermal Conductivity Liquid: 50.0
+        Thermal Conductivity Vapor: 50.0
+      rho_Cp: 
+        Value: 1.89e6
+      Initial Psi1: 
+        Psi1: 0.0
+      Initial Psi2: 
+        Psi2: 0.0
+      Laser Source: 
+        Extinction coefficient: 75000.0
+        Reflectivity: 0.1
+      Initial Phi1: 
+        Melting Temperature: 1414000.0
+        delta Temperature: 150.0
+      Initial Phi2: 
+        Vapourization Temperature: 3265000.0
+        delta Temperature: 150.0
+      Phase Change Properties: 
+        Volumetric Heat Capacity Liquid: 1.89e6
+        Latent Heat of Melting: 387.0e6
+        Latent Heat of Vapourization: 26.47e9
+        Volumetric Heat Capacity Vapour: 1.89e6
+...
