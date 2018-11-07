@@ -1,4 +1,4 @@
-/* write_temp_history.cpp
+/* _3DM_solution_manipulation.cpp
  *
  *
  *
@@ -33,11 +33,11 @@ std::string input_filename_base;
 void create_single_pt_temp_hist_file(int node_id, int step_size, std::string output_filename);
 void create_thermocouple_temp_hist_file(bool);
 
-//regular grid csv file outputs for use with phase field model
+//regular grid csv file outputs for input to phase field model
 void create_grid_csv_temp_hist_file(int step_size, double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing);
 
 //regular grid vtu file outputs to view results in Paraview
-void create_grid_vtu_temp_hist(int step_size, double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing);
+void create_grid_vtu_temp_hist_file(int step_size, double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing);
 
 
 int main()
@@ -309,7 +309,7 @@ void create_grid_csv_temp_hist_file(int step_size, double *grid_origin, int *gri
 
 }
 
-void create_grid_vtu_temp_hist(int step_size, double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing){	
+void create_grid_vtu_temp_hist_file(int step_size, double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing){	
 	std::vector<node> pointlist;
 	std::vector<element> output_elementlist;
 	std::vector<cube> cubelist;	

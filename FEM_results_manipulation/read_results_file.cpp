@@ -143,12 +143,13 @@ double element::interpret_pt_value(node *point){
   N3 = (1/(6*V))*(6*V_03 + p[0]*mat31 + p[1]*mat32 + p[2]*mat33);
   N4 = (1/(6*V))*(6*V_04 + p[0]*mat41 + p[1]*mat42 + p[2]*mat43);
   
+  /*
   cout << "Point Coordinates: " << p[0] << ", " << p[1] << ", " << p[2] << "\n";
   cout << "N1: " << N1 << "\n";
   cout << "N2: " << N2 << "\n";
   cout << "N3: " << N3 << "\n";
   cout << "N4: " << N4 << "\n\n";
-  
+  */
 
 return ( (N1*nodelist[this->v1].temperature) + (N2*nodelist[this->v2].temperature) + (N3*nodelist[this->v3].temperature) + (N4*nodelist[this->v4].temperature) );
 }
@@ -200,14 +201,8 @@ bool SameSide(double v1c[], double v2c[], double v3c[], double v4c[], double p[]
 }
 
 
-bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], double p[]){
-
-	SameSide(v1c, v2c, v3c, v4c, p) &&
-    SameSide(v2c, v3c, v4c, v1c, p) &&
-    SameSide(v3c, v4c, v1c, v2c, p) &&
-    SameSide(v4c, v1c, v2c, v3c, p))              
-
-    return SameSide(v1c, v2c, v3c, v4c, p) &&
+bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], double p[]){ 
+	return SameSide(v1c, v2c, v3c, v4c, p) &&
            SameSide(v2c, v3c, v4c, v1c, p) &&
            SameSide(v3c, v4c, v1c, v2c, p) &&
            SameSide(v4c, v1c, v2c, v3c, p);               
@@ -226,7 +221,7 @@ bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], 
   
 */ 
 
-void get_FEM_vtu_data(string results_folder, int time_iter, bool single_val, int pt_val, std::string data_name_list){
+void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string data_name_list, bool single_val, int pt_val){
 
   std::string line, line_comm;
   int nnodes,nel,offset_pt = 0, offset_el = 0;
@@ -240,6 +235,7 @@ void get_FEM_vtu_data(string results_folder, int time_iter, bool single_val, int
     cout << "Importing data for time step " << time_iter << " ---- Part " << mesh_part << endl;
     ss << mesh_part;
     std::ifstream input((results_folder + "0/" +  ss.str() +  ".vtu").c_str());
+	if (!input){std::cerr << "Error: certain VTU results files could not be opened!\n"; return;}
     ss.str("");
     std::getline(input,line);
     std::getline(input,line);  

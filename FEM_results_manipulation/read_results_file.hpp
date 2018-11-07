@@ -4,6 +4,7 @@
 #include<string>
 #include<vector>
 
+//Node object used to store data for both the input FE mesh and output regular grid points
 class node
 {
   public:
@@ -15,7 +16,8 @@ class node
     void add_temperature(double);
     void create_coordinate_array(void);
 };
-         
+    
+//Element object used to store the FE unstructured mesh data 	
 class element
 {
   public:
@@ -28,6 +30,7 @@ class element
     double interpret_pt_value(node *point);
 }; 
    
+//Cube object used for creating the vtu output visualization of the regular grid temp transfer
 class cube
 {
   public:
@@ -35,14 +38,19 @@ class cube
 	cube(int*);
 };
 
+
+//Math functions used to determine if the regular gridpoints are inside the FE tet elements
 double dot_prod(double v_a[], double v_b[]);
 void cross_prod(double cross_p[], double v_a[], double v_b[]);
 void vector_subtract(double subtr[], double v_a[], double v_b[]);
 bool SameSide(double v1c[], double v2c[], double v3c[], double v4c[], double p[]);
 bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], double p[]);
 
-void get_FEM_vtu_data(string results_folder, int time_iter, std::string data_name_list, bool single_val, int pt_val);
 
+//Extracts the FE unstructured mesh data from the Albany vtu output files
+void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string data_name_list, bool single_val, int pt_val);
+
+//Global vars to hold FE unstructured mesh data - may want to change in the future and make local
 extern std::vector<node> nodelist;
 extern std::vector<element> elementlist;
 
