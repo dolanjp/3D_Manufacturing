@@ -2,9 +2,10 @@
 ---
 ANONYMOUS:
   Problem: 
-    Name: AMPThermoMechanics 3D
+    Name: _3DManufacturing 3D
     Number Of Time Derivatives: 1
     MaterialDB Filename: _3DM_Materials.yaml
+    Laser Path Input Filename: LaserCenter.txt
     Solution Method: Continuation
     Initial Condition: 
       Function: Constant
@@ -15,7 +16,7 @@ ANONYMOUS:
     #Added parameters
     Simulation Type: SLM Additive
     Powder Layer Thickness: 50e-6
-    Powder Layer Porosity: 0.652
+    Powder Layer Initial Porosity: 0.652
     Powder Diameter: 30e-6    
     Laser Beam Radius: 100e-6   
   Discretization: 

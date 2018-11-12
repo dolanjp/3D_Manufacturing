@@ -35,16 +35,16 @@ ANONYMOUS:
         #Extinction coefficient computed in the model for powders
         Extinction coefficient: 0.0
         Reflectivity: 0.7
-      Initial Phi1: 
+      Phi1: 
         Melting Temperature: 1571.0
         delta Temperature: 152.0
-      Initial Phi2: 
-        Vapourization Temperature: 
+      Phi2: 
+        Vaporization Temperature: 
         delta Temperature: 152.0
       Phase Change Properties: 
         Volumetric Heat Capacity Liquid Value: 5.247e+06
         Latent Heat Value: 1.588e+09
-        Latent Heat of Vapourization: 
+        Latent Heat of Vaporization: 
         Volumetric Heat Capacity Vapour:
         
     Solid_IN718:
@@ -69,16 +69,16 @@ ANONYMOUS:
       Laser Source: 
         Extinction coefficient: 0.0
         Reflectivity: 0.7
-      Initial Phi1: 
+      Phi1: 
         Melting Temperature: 1571.0
         delta Temperature: 152.0
-      Initial Phi2: 
-        Vapourization Temperature: 
+      Phi2: 
+        Vaporization Temperature: 
         delta Temperature: 152.0
       Phase Change Properties: 
         Volumetric Heat Capacity Liquid Value: 5.247e+06
         Latent Heat Value: 1.588e+09
-        Latent Heat of Vapourization: 
+        Latent Heat of Vaporization: 
         Volumetric Heat Capacity Vapour:
  
     Powder_316:
@@ -104,16 +104,16 @@ ANONYMOUS:
       Laser Source: 
         Extinction coefficient: 75000.0
         Reflectivity: 0.1
-      Initial Phi1: 
+      Phi1: 
         Melting Temperature: 1414000.0
         delta Temperature: 150.0
-      Initial Phi2: 
-        Vapourization Temperature: 3265000.0
+      Phi2: 
+        Vaporization Temperature: 3265000.0
         delta Temperature: 150.0
       Phase Change Properties: 
         Volumetric Heat Capacity Liquid: 1.89e6
         Latent Heat of Melting: 387.0e6
-        Latent Heat of Vapourization: 26.47e9
+        Latent Heat of Vaporization: 26.47e9
         Volumetric Heat Capacity Vapour: 1.89e6
 
     Si: 
@@ -135,15 +135,15 @@ ANONYMOUS:
       Laser Source: 
         Extinction coefficient: 75000.0
         Reflectivity: 0.1
-      Initial Phi1: 
+      Phi1: 
         Melting Temperature: 1414000.0
         delta Temperature: 150.0
-      Initial Phi2: 
-        Vapourization Temperature: 3265000.0
+      Phi2: 
+        Vaporization Temperature: 3265000.0
         delta Temperature: 150.0
       Phase Change Properties: 
         Volumetric Heat Capacity Liquid: 1.89e6
         Latent Heat of Melting: 387.0e6
-        Latent Heat of Vapourization: 26.47e9
+        Latent Heat of Vaporization: 26.47e9
         Volumetric Heat Capacity Vapour: 1.89e6
 ...

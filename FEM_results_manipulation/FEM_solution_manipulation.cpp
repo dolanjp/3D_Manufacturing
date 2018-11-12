@@ -20,27 +20,6 @@
 
 using namespace std;
 
-//Move pointlist to local functions
-//std::vector<int> pointlist;
-/*
-int main(){
-	//input_filepath_pvd = "../AMP_Modeling_Data/Thermocouple_Simulation/Thermocouple_Parallel_60W_160mms/";
-	//input_filename_base = "center_zigzag_test_actual";
-	char input_filepath[] = "../AMP_Modeling_Data/Thermocouple_Simulation/";
-	char input_filename[] = "Thermocouple_Parallel_60W_160mms";
-	char output_filename[] = "Thermocouple_Parallel_60W_160mms";
-	int step_size = 1;
-	double grid_origin[] = {50e-6, 500e-6, 0};
-	double grid_opposite_corner[] = {250e-6, 700e-6, 50e-6};
-	int grid_dir[] = {1,1,1};  //1 for positive direction, -1 for negative direction
-	int num_pts[] = {40,40,10};
-	double grid_spacing[] = {abs(grid_origin[0]-grid_opposite_corner[0])/((double)num_pts[0]-1),
-							 abs(grid_origin[1] - grid_opposite_corner[1])/((double)num_pts[1]-1),
-							 abs(grid_origin[2] - grid_opposite_corner[2])/((double)num_pts[2]-1)};
-
-	create_grid_csv_temp_hist_file(input_filepath, input_filename, output_filename, step_size, grid_origin, grid_dir, num_pts, grid_spacing);
-}
-*/
 void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int node_id, int step_size){
 	//Create local vars
 	double timestep;

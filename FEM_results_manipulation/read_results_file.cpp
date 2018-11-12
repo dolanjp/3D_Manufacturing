@@ -72,37 +72,18 @@ void element::find_bounds(void){
 bool element::is_point_inside(node *point){
   bool isin = 0;
 
-   /* double v1[] = {0, 0, 0};
-    double v2[] = {1, 0, 0};
-    double v3[] = {0, 1, 0};
-    double v4[] = {0, 0, 1};
-    double p[]  = {2, 2, 2};
-    bool isin;
-    double maxx = 1;
-    double maxy = 1;
-    double maxz = 1;
-    double minx = 0;
-    double miny = 0;
-    double minz = 0;
-  */
   if (    (this->minx <= point->x) && (this->maxx >= point->x) &&
           (this->miny <= point->y) && (this->maxy >= point->y) &&
           (this->minz <= point->z) && (this->maxz >= point->z) )             
   {
-   // double cd_vec1[] = {nodelist[elem.v1].x, nodelist[elem.v1].y, nodelist[elem.v1].z};
-   // double cd_vec2[] = {nodelist[elem.v1].x, nodelist[elem.v1].y, nodelist[elem.v1].z};
-   // double cd_vec3[] = {nodelist[elem.v1].x, nodelist[elem.v1].y, nodelist[elem.v1].z};
-   // double cd_vec4[] = {nodelist[elem.v1].x, nodelist[elem.v1].y, nodelist[elem.v1].z};
+
    return isin = PointInTetrahedron(nodelist[this->v1].cd_vec, nodelist[this->v2].cd_vec, nodelist[this->v3].cd_vec, nodelist[this->v4].cd_vec, point->cd_vec);
   }   
   else return 0;      
-   // std::cout << *std::max_element(temp_array, temp_array+4);
-   // std::cout <<"vals" << v1[j] << v2[j] << v3[j] << v4[j] << "\n";  
-  
-
-   // std::cout << in_bound;    
-
-//  isin = PointInTetrahedron(v1, v2, v3, v4, p);
+  // std::cout << *std::max_element(temp_array, temp_array+4);
+  // std::cout <<"vals" << v1[j] << v2[j] << v3[j] << v4[j] << "\n";  
+  // std::cout << in_bound;    
+  //  isin = PointInTetrahedron(v1, v2, v3, v4, p);
   //std::cout << isin << "\n";
 }
 
@@ -209,6 +190,7 @@ bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], 
 }
 
 /*
+//Testing to check that vector_subtract is working properly
   double prod;
   double subtr_test[3];
   double v1[] = {6.9, -2.2, 4.32};
@@ -294,12 +276,3 @@ void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string dat
   }
 
 }
-
-/* NOTES
-
-- nodeset vector indices are the same as the node ID's from paraview for all mesh parts. Tested and saw that the temp was the same value for several nodes, even nodes in the 4th part of a 4 part mesh
-
-*/
-
-
-

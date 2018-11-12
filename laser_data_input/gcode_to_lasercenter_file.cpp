@@ -16,7 +16,7 @@ using namespace std;
 
 // Define Laser Center file time step (in seconds). This does not impact the time step
 // in the AMP simulation, it only determines the resolution of the Laser Center file interpolation
-double time_step = 1e-06;
+double time_step = 1e-3;
 
 //Define data containers and counters
 std::string gcode_data_labels[] = {"F","X","Y","S"};
@@ -43,7 +43,8 @@ int main(int argc, char* argv[])
 	  return 0;
   }
   
-  
+  std::cout << "Started... \n";
+  int temp_count = 0;
   while (getline(input,line))
   {
 	if (line.find(";") != 0){  //If the entire line is not commented
@@ -102,7 +103,7 @@ void parse_vals (const string& line)
   }
  
   
-  cout << "F: " << gcode_data[0][line_count] << " X: " << gcode_data[1][line_count] << "  Y:  " << gcode_data[2][line_count] << "  S:  " << gcode_data[3][line_count] << "  Line_Count:  " << line_count << "\n";
+  //cout << "F: " << gcode_data[0][line_count] << " X: " << gcode_data[1][line_count] << "  Y:  " << gcode_data[2][line_count] << "  S:  " << gcode_data[3][line_count] << "  Line_Count:  " << line_count << "\n";
   line_count++;
 }  
 
@@ -134,7 +135,7 @@ void interp_write(char* output_filepath)
 
   while (gcl < line_count) //Note: line_count is incremented one past the end of the gcode_data list
     {  
-	  std::cout << gcl;
+	  //std::cout << gcl;
       if (gcode_line_remainder > time_remaining/gcl_time(gcl))
       { 
         gcode_line_remainder = gcode_line_remainder - (time_remaining/gcl_time(gcl));

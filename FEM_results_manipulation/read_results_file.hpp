@@ -11,6 +11,7 @@ class node
     int id, coord_array_created; 
     double x, y, z, temperature; 
     double cd_vec[3];
+	
     node(double, double, double, int, int);
     void printinfo(void); 
     void add_temperature(double);
