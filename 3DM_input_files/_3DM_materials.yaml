@@ -11,7 +11,6 @@ ANONYMOUS:
    #Solid_Region_2:
    #  material: 
   Materials: 
-  
     Powder_IN718:
       Category: Powder_IN718
       Thermal Conductivity: 
@@ -32,8 +31,8 @@ ANONYMOUS:
       Initial Psi2: 
         Psi2: 0.0
       Laser Source: 
-        #Extinction coefficient computed in the model for powders
-        Extinction coefficient: 0.0
+        #Absortivity computed in the model for powders
+        Absortivity: 0.0
         Reflectivity: 0.7
       Phi1: 
         Melting Temperature: 1571.0
@@ -67,7 +66,7 @@ ANONYMOUS:
       Initial Psi2: 
         Psi2: 0.0
       Laser Source: 
-        Extinction coefficient: 0.0
+        Absortivity: 0.0
         Reflectivity: 0.7
       Phi1: 
         Melting Temperature: 1571.0
@@ -102,7 +101,7 @@ ANONYMOUS:
       Initial Psi2: 
         Psi2: 0.0
       Laser Source: 
-        Extinction coefficient: 75000.0
+        Absortivity: 75000.0
         Reflectivity: 0.1
       Phi1: 
         Melting Temperature: 1414000.0
@@ -133,7 +132,7 @@ ANONYMOUS:
       Initial Psi2: 
         Psi2: 0.0
       Laser Source: 
-        Extinction coefficient: 75000.0
+        Absortivity: 75000.0
         Reflectivity: 0.1
       Phi1: 
         Melting Temperature: 1414000.0
