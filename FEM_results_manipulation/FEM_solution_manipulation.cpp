@@ -20,7 +20,7 @@
 
 using namespace std;
 
-void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int node_id, int step_size){
+void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename, int node_id){
 	//Create local vars
 	double timestep;
 	int solution_step = 0;
@@ -40,18 +40,11 @@ void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string
 	outfile_temp_hist << "Time (seconds), Average Point Temperature (K)" << endl;
 	std::ostringstream ss_pvd;
 	
-	//Iterate through each timestep and extract the temperature 
-	int step_iter = 0;
-	
 	while (line_pvd.find("</Collection>") > 5000){
-		step_iter++;
-		if (step_iter >= step_size){
-			step_iter = 0; 
-			ss_pvd.str("");
-			ss_pvd << solution_step;
-			string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
-			get_FEM_vtu_data(input_folder, solution_step, "Solution",  true, node_id);   
-      
+		ss_pvd.str("");
+		ss_pvd << solution_step;
+		string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
+		if (get_FEM_vtu_data(input_folder, num_parts, solution_step, "Solution",  true, node_id)){   
 			sscanf(line_pvd.c_str(), "     <DataSet timestep=\"%lf", &timestep);
 			outfile_temp_hist << fixed << setprecision(7) << timestep << "," <<  nodelist[0].temperature << endl;
 		}
@@ -65,13 +58,13 @@ void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string
 }
 
 
-void create_thermocouple_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int step_size){
+void create_thermocouple_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename){
 	//Create list to hold regular grid points
 	std::vector<node> pointlist;
 	
 	//Create local vars
 	double timestep;
-	int solution_step = 1; //Non-resetting iterator that keeps track of current timestep
+	int solution_step = 0; //Non-resetting iterator that keeps track of current timestep
 	std::string line_pvd;
 	bool pointlist_init = false; //Must complete one solution grab before initializing the pointlist
 
@@ -91,18 +84,13 @@ void create_thermocouple_temp_hist_file(std::string input_filepath_pvd, std::str
 
 	//Start parsing the lines of the pvd file
 	std::ostringstream ss_pvd;
-	int step_iterator = 1;
-	while (line_pvd.find("</Collection>") > 5000) //Before reaching the end of the list
-	{
-	  if (step_iterator >= step_size) //Only get data from certain timesteps 
-		{
-		  step_iterator = 0; 
-		  ss_pvd.str("");
-		  ss_pvd << solution_step;
-		  //Find the folder for the mesh part vtu files for this specific timestep
-		  std::string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
-		  //Retrieve data from these vtu results files
-		  get_FEM_vtu_data(input_folder, solution_step, "Solution", false, 0); 
+	while (line_pvd.find("</Collection>") > 5000){ //Before reaching the end of the list
+	  ss_pvd.str("");
+	  ss_pvd << solution_step;
+	  //Find the folder for the mesh part vtu files for this specific timestep
+	  std::string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
+	  //Retrieve data from these vtu results files
+	  if (get_FEM_vtu_data(input_folder, num_parts, solution_step, "Solution", false, 0)){ 
 		  //If this is the first timestep, create the list of nodes at the thermocouple junction
 		  if (!pointlist_init){
 			for (int nd = 0; nd < nodelist.size(); nd++){
@@ -137,16 +125,14 @@ void create_thermocouple_temp_hist_file(std::string input_filepath_pvd, std::str
 	  nodelist.clear();
 	  elementlist.clear();
 	  solution_step++;
-	  step_iterator++;
 	}
 	outfile_temp_hist.close();
 	input_pvd.close();
 }
 
-//num_pts is an array for number of points in x,y,z directions
-//box_length is an array for total lengths of the "box" in x,y,z directions
-void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int step_size, 
-									double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing){
+
+void consolidate_powder_layer(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename,
+								double powder_layer_thickness){
 	//Create list to hold regular grid points
 	std::vector<node> pointlist;
 	
@@ -154,10 +140,9 @@ void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string 
 	double timestep;
 	int solution_step = 0; //Non-resetting iterator that keeps track of current timestep
 	std::string line_pvd;
-	bool pointlist_init = false; //Must complete one solution grab before initializing the pointlist
 
 	//Open the results file "list"
-	cout << "filename: " << input_filepath_pvd << input_filename_base << std::endl;
+	cout << "Opening file: " << input_filepath_pvd << input_filename_base << std::endl;
 	std::ifstream input_pvd((input_filepath_pvd + input_filename_base + ".pvd").c_str());   
 	if (!input_pvd){std::cerr << "Error: Specified input file could not be opened!\n"; return;}	
 	std::getline(input_pvd, line_pvd);
@@ -167,43 +152,16 @@ void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string 
 	
 	//Create and open the output file
 	ofstream outfile_temp_hist(output_filename.c_str(), ofstream::out | ofstream::trunc);
- 
-	//Compute the points in the regular grid and add to the pointlist  
-	cout << endl << endl << "Initialzing Regular Grid Pointlist" << endl << endl;
-	int total_pt_count = 0;
-	for (int x_iter = 0; x_iter < num_pts[0]; x_iter++){
-		for (int y_iter = 0; y_iter < num_pts[1]; y_iter++){
-			for (int z_iter = 0; z_iter < num_pts[2]; z_iter++){
-				pointlist.push_back(node((grid_origin[0]+(grid_dir[0]*x_iter*grid_spacing[0])), 
-										(grid_origin[1]+(grid_dir[1]*y_iter*grid_spacing[1])), 
-										(grid_origin[2]+(grid_dir[2]*z_iter*grid_spacing[2])), (total_pt_count), 0));
-				total_pt_count++;
-			}
-		}
-	} 
-  
-	outfile_temp_hist << "Regular Grid Temperature History for Simulation \"" << input_filename_base << "\" " << endl; 
-    outfile_temp_hist << "Regular Grid Point Number, X Coord, Y Coord, Z Coord" << "\n";
-      
-	for (int pt_ct = 0; pt_ct < pointlist.size(); pt_ct++){
-		outfile_temp_hist << pointlist[pt_ct].id << ", " << pointlist[pt_ct].x << ", " << pointlist[pt_ct].y << ", " << pointlist[pt_ct].z << "\n"; 
-	}
-
-  outfile_temp_hist << "Time (seconds), Temperature at Regular Grid Points \n"; 
-
+       
   std::ostringstream ss_pvd;
-  int step_iterator = 0;
 
   while (line_pvd.find("</Collection>") > 5000){ //Iterate until the end of the simulation timesteps 
-    if (step_iterator >= step_size){ //If the next step has been reached
-      step_iterator = 0; 
-      ss_pvd.str("");
-      ss_pvd << solution_step; 
-      string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
-	  std::cout << "input vtu folder: " << input_folder << std::endl;
-      //Read the results files and enter the info into the node and element data structures
-      get_FEM_vtu_data(input_folder, solution_step, "Solution", false, 0); 
-
+    ss_pvd.str("");
+    ss_pvd << solution_step; 
+    string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
+    std::cout << "input vtu folder: " << input_folder << std::endl;
+    //Read the results files and enter the info into the node and element data structures
+    if (get_FEM_vtu_data(input_folder, num_parts, solution_step, "Solution", false, 0)){ 
 	  //Create and init. array to keep track and make sure all regular grid points are contained in the FEM unstructured mesh
       int interpreted_value_found[pointlist.size()]; 
 	  for (int pt = 0; pt < pointlist.size(); pt++){
@@ -259,28 +217,149 @@ void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string 
       for (int pt = 0; pt < pointlist.size(); pt++){
         outfile_temp_hist << pointlist[pt].temperature;
         if (pt != pointlist.size() - 1) outfile_temp_hist << ",";
-      }     
+	  }     
       outfile_temp_hist << "\n";
       nodelist.clear();
       elementlist.clear();
     }
     std::getline(input_pvd,line_pvd);
     solution_step++;
-    step_iterator++;
+  }
+  outfile_temp_hist.close();
+  input_pvd.close();	
+								}
+
+//num_pts is an array for number of points in x,y,z directions
+//box_length is an array for total lengths of the "box" in x,y,z directions
+void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename, 
+									double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing){
+	//Create list to hold regular grid points
+	std::vector<node> pointlist;
+	//Create local vars
+	double timestep;
+	int solution_step = 0; //Non-resetting iterator that keeps track of current timestep
+	std::string line_pvd;
+	bool pointlist_init = false; //Must complete one solution grab before initializing the pointlist
+
+	//Open the results file "list"
+	cout << "filename: " << input_filepath_pvd << input_filename_base << std::endl;
+	std::ifstream input_pvd((input_filepath_pvd + input_filename_base + ".pvd").c_str());   
+	if (!input_pvd){std::cerr << "Error: Specified input file could not be opened!\n"; return;}	
+	std::getline(input_pvd, line_pvd);
+	while (line_pvd.find("<DataSet") > 5000){
+	  std::getline(input_pvd, line_pvd);
+	}
+	
+	//Create and open the output file
+	ofstream outfile_temp_hist(output_filename.c_str(), ofstream::out | ofstream::trunc);
+ 
+	//Compute the points in the regular grid and add to the pointlist  
+	cout << endl << endl << "Initialzing Regular Grid Pointlist" << endl << endl;
+	int total_pt_count = 0;
+	for (int x_iter = 0; x_iter < num_pts[0]; x_iter++){
+		for (int y_iter = 0; y_iter < num_pts[1]; y_iter++){
+			for (int z_iter = 0; z_iter < num_pts[2]; z_iter++){
+				pointlist.push_back(node((grid_origin[0]+(grid_dir[0]*x_iter*grid_spacing[0])), 
+										(grid_origin[1]+(grid_dir[1]*y_iter*grid_spacing[1])), 
+										(grid_origin[2]+(grid_dir[2]*z_iter*grid_spacing[2])), (total_pt_count), 0));
+				total_pt_count++;
+			}
+		}
+	} 
+  
+	outfile_temp_hist << "Regular Grid Temperature History for Simulation \"" << input_filename_base << "\" " << endl; 
+    outfile_temp_hist << "Regular Grid Point Number, X Coord, Y Coord, Z Coord" << "\n";
+      
+	for (int pt_ct = 0; pt_ct < pointlist.size(); pt_ct++){
+		outfile_temp_hist << pointlist[pt_ct].id << ", " << pointlist[pt_ct].x << ", " << pointlist[pt_ct].y << ", " << pointlist[pt_ct].z << "\n"; 
+	}
+
+  outfile_temp_hist << "Time (seconds), Temperature at Regular Grid Points \n"; 
+
+  std::ostringstream ss_pvd;
+
+  while (line_pvd.find("</Collection>") > 5000){ //Iterate until the end of the simulation timesteps 
+    ss_pvd.str("");
+    ss_pvd << solution_step; 
+    string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
+    std::cout << "input vtu folder: " << input_folder << std::endl;
+    //Read the results files and enter the info into the node and element data structures
+    if (get_FEM_vtu_data(input_folder, num_parts, solution_step, "Solution", false, 0)){
+	  //Create and init. array to keep track and make sure all regular grid points are contained in the FEM unstructured mesh
+	  int interpreted_value_found[pointlist.size()]; 
+	  for (int pt = 0; pt < pointlist.size(); pt++){
+		interpreted_value_found[pt] = 0;
+	  }
+
+	  //Create coordinate arrays for all result mesh nodes
+	  std::cout << "Creating coordinate arrays for nodes \n";
+	  for (int nd = 0; nd < nodelist.size(); nd++){
+		nodelist[nd].create_coordinate_array();
+	  }
+	  
+	  //Create coordinate arrays for all receiving regular grid points
+	  std::cout << "Creating coordinate arrays for regular grid points \n";
+	  for (int pt = 0; pt < pointlist.size(); pt++){
+		pointlist[pt].create_coordinate_array();
+	  }
+	  
+	  std::cout << "Finding bounding boxes of elements \n";
+	  //Find the bounding box around all result mesh elements
+	  for (int elem = 0; elem < elementlist.size(); elem++){
+		elementlist[elem].find_bounds();
+	  }
+
+	  std::cout << "Performing Interpolation... \n";
+	  //Iterate through all donor elements and find points that lie within each element
+	  for (int elem = 0; elem < elementlist.size(); elem++){
+		for (int pt = 0; pt < pointlist.size(); pt++){
+		  if (elementlist[elem].is_point_inside(&pointlist[pt])){
+			interpreted_value_found[pt] = 1;
+			pointlist[pt].temperature = elementlist[elem].interpret_pt_value(&pointlist[pt]);
+		  }
+		}
+	  }
+	  std::cout << "Interpolation complete \n\n";
+
+	  //Check that all points were contained inside the mesh
+	  bool error_msg = false;
+	  for (int pt = 0; pt < pointlist.size(); pt++){
+		if (!interpreted_value_found[pt]) error_msg = true;
+	  }
+	  if (error_msg == true) printf("Error: Not all regular grid points are located inside the mesh! \n\n");
+
+//    outfile_temp_hist.close();
+	  //    input_pvd.close();
+	  //    return;    
+	  
+	  //Print the results to the output file 
+	  sscanf(line_pvd.c_str(), "     <DataSet timestep=\"%lf", &timestep);
+	  
+	  outfile_temp_hist << fixed << setprecision(7) << timestep << ",";
+  
+	  for (int pt = 0; pt < pointlist.size(); pt++){
+		outfile_temp_hist << pointlist[pt].temperature;
+		if (pt != pointlist.size() - 1) outfile_temp_hist << ",";
+	  }     
+	  outfile_temp_hist << "\n";
+	  nodelist.clear();
+	  elementlist.clear();
+    }
+    std::getline(input_pvd,line_pvd);
+    solution_step++;
   }
   outfile_temp_hist.close();
   input_pvd.close();
-
 }
 
-void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int step_size, 
+void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename, 
 									double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing){	
 	std::vector<node> pointlist;
 	std::vector<element> output_elementlist;
 	std::vector<cube> cubelist;	
 	
 	double timestep;
-	int solution_step = 1;
+	int solution_step = 0;
 	std::string line_pvd;
 
 	std::ifstream input_pvd((input_filepath_pvd + input_filename_base + ".pvd").c_str()); 
@@ -383,29 +462,25 @@ void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string 
    
 	std::ostringstream ss_pvd;
 
-	int step_iterator = 0;
 	while (line_pvd.find("</Collection>") > 5000){ //Iterate until the end of the mesh results file is reached 
-		if (step_iterator >= step_size){ //If the next step has been reached
-		  step_iterator = 0; 
-		  ss_pvd.str("");
-		  ss_pvd << solution_step; 
-		  string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
-		  //Read the results files and enter the info into the node and element data structures
-		  get_FEM_vtu_data(input_folder, solution_step, "Solution", false, 0); 
-	  
+	  ss_pvd.str("");
+	  ss_pvd << solution_step; 
+	  string input_folder = input_filepath_pvd + input_filename_base + "_" + ss_pvd.str() + "/";
+	  //Read the results files and enter the info into the node and element data structures
+	  if (get_FEM_vtu_data(input_folder, num_parts, solution_step, "Solution", false, 0)){
 		  //Create and init. array to keep track and make sure all regular grid points are contained in the FEM unstructured mesh
 		  int interpreted_value_found[pointlist.size()]; 
 		  for (int pt = 0; pt < pointlist.size(); pt++){
 			interpreted_value_found[pt] = 0;
 		  }
 		  //Create coordinate arrays for all result mesh nodes
-		  std::cout << "Creating coordinate arrays for nodes... \n\n";
+		  std::cout << "Creating coordinate arrays for nodes... \n";
 		  for (int nd = 0; nd < nodelist.size(); nd++){
 			nodelist[nd].create_coordinate_array();
 		  }
 		  
 		  //Create coordinate arrays for all receiving regular grid points
-		  std::cout << "Creating coordinate arrays for reg grid points... \n\n";
+		  std::cout << "Creating coordinate arrays for reg grid points... \n";
 		  for (int pt = 0; pt < pointlist.size(); pt++){
 			pointlist[pt].create_coordinate_array();
 		  }
@@ -417,7 +492,7 @@ void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string 
 		  }
 		  
 		  //Iterate through all donor elements and find points that lie within each element
-		  std::cout << "Interpolation solution onto regular grid... \n\n";
+		  std::cout << "Interpolation solution onto regular grid... \n";
 		  for (int elem = 0; elem < elementlist.size(); elem++){
 			for (int pt = 0; pt < pointlist.size(); pt++){
 			  if (elementlist[elem].is_point_inside(&pointlist[pt])){
@@ -450,12 +525,10 @@ void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string 
 		  
 		  nodelist.clear();
 		  elementlist.clear();
-		}
-		std::getline(input_pvd,line_pvd);
-		solution_step++;
-		step_iterator++;
+	  }
+  	  std::getline(input_pvd,line_pvd);
+	  solution_step++;
 	}
-  
   outfile_temp_hist.close();
   input_pvd.close();
 

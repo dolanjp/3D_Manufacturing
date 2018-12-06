@@ -11,17 +11,25 @@
 #include<string>
 #include<sstream>
 
-void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int node_id, int step_size);
+void create_single_pt_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename, int node_id);
 
-void create_thermocouple_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int step_size);
+void create_thermocouple_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename);
+
+// Temporarily function used to artificially compute the deformed configuration of the powder layer.
+// This will collapse the entire powder layer uniformly, so care must be taken to only extract
+// results from regions where the powder was fully melted and consolidated
+void consolidate_powder_layer(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename, 
+								double powder_layer_thickness);
 
 //regular grid csv file outputs for input to phase field model
-void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int step_size, 
+void create_grid_csv_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename,  
 									double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing);
 
 //regular grid vtu file outputs to view results in Paraview
-void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, std::string output_filename, int step_size, 
+void create_grid_vtu_temp_hist_file(std::string input_filepath_pvd, std::string input_filename_base, int num_parts, std::string output_filename,
 									double *grid_origin, int *grid_dir, int *num_pts, double *grid_spacing);
 
 
+									
+									
 #endif

@@ -203,12 +203,10 @@ bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], 
   
 */ 
 
-void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string data_name_list, bool single_val, int pt_val){
+bool get_FEM_vtu_data(std::string results_folder, int num_parts, int time_iter, std::string data_name_list, bool single_val, int pt_val){
 
   std::string line, line_comm;
   int nnodes,nel,offset_pt = 0, offset_el = 0;
-  int num_parts = 4;
-  
   std::ostringstream ss;
 
   // iterate over mesh subdivision files
@@ -217,7 +215,7 @@ void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string dat
     cout << "Importing data for time step " << time_iter << " ---- Part " << mesh_part << endl;
     ss << mesh_part;
     std::ifstream input((results_folder + "0/" +  ss.str() +  ".vtu").c_str());
-	if (!input){std::cerr << "Error: certain VTU results files could not be opened!\n"; return;}
+	if (!input){std::cerr << "Error: certain VTU results files could not be opened! Skipping this time step \n\n"; return 0;}
     ss.str("");
     std::getline(input,line);
     std::getline(input,line);  
@@ -274,5 +272,5 @@ void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string dat
     offset_pt = offset_pt + nnodes;
     offset_el = offset_el + nel;
   }
-
+  return 1;
 }

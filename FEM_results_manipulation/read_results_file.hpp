@@ -49,7 +49,7 @@ bool PointInTetrahedron(double v1c[], double v2c[], double v3c[], double v4c[], 
 
 
 //Extracts the FE unstructured mesh data from the Albany vtu output files
-void get_FEM_vtu_data(std::string results_folder, int time_iter, std::string data_name_list, bool single_val, int pt_val);
+bool get_FEM_vtu_data(std::string results_folder, int num_parts, int time_iter, std::string data_name_list, bool single_val, int pt_val);
 
 //Global vars to hold FE unstructured mesh data - may want to change in the future and make local
 extern std::vector<node> nodelist;
