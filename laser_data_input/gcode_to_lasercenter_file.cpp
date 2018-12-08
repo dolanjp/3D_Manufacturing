@@ -8,7 +8,7 @@
 #include<sstream>
 #include<stdlib.h>
 
-//Command line syntax: ./gcode_to_lasercenter <input_file> <output_file>
+//Command line syntax: ./gcode_to_lasercenter <input_file> <output_file> <time_step>
 
 
 using namespace std;
