@@ -6,6 +6,7 @@
 #include<cmath>
 #include<iomanip>
 #include<sstream>
+#include<stdlib.h>
 
 //Command line syntax: ./gcode_to_lasercenter <input_file> <output_file>
 
@@ -16,7 +17,7 @@ using namespace std;
 
 // Define Laser Center file time step (in seconds). This does not impact the time step
 // in the AMP simulation, it only determines the resolution of the Laser Center file interpolation
-double time_step = 1e-3;
+double time_step;
 
 //Define data containers and counters
 std::string gcode_data_labels[] = {"F","X","Y","S"};
@@ -32,16 +33,19 @@ void interp_write(char*);
 int main(int argc, char* argv[])
 {
   std::string line, line_trunc, input_filename;
-  if ((argv[1] == NULL) || (argv[2] == NULL)){
+  if ((argv[1] == NULL) || (argv[2] == NULL) || (argv[3] == NULL)){
 	  std::cout << "Error: input and output file paths not specified properly \n";
 	  return 0;	  
   }
-  
+   
   ifstream input(argv[1]);  
   if (!input){
 	  std::cout << "Error: input file is not valid \n";
 	  return 0;
   }
+  
+  time_step = atof(argv[3]); 
+  std::cout << "Time step = " << time_step << std::endl;
   
   std::cout << "Started... \n";
   int temp_count = 0;
