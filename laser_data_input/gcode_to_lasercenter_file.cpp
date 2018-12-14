@@ -135,6 +135,7 @@ void interp_write(char* output_filepath)
   
   //Write the first position at time = 0
   S = hard_coded_laser_power; //remove after specified Albany code change is made
+  //remove "Laser_On_Off" from file print once 3DM model is up and running
   outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << Laser_On_Off << "\t" << S << "\n";  //Note: the order and content of these parameters may change
 
   while (gcl < line_count) //Note: line_count is incremented one past the end of the gcode_data list
@@ -149,7 +150,8 @@ void interp_write(char* output_filepath)
         T = T + time_step;
         
 	  S = hard_coded_laser_power; //remove after specified Albany code change is made
-      outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << Laser_On_Off << "\t" << S << "\n";  //Note: the order and content of these parameters may change
+      //remove "Laser_On_Off" from file print once 3DM model is up and running
+	  outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << Laser_On_Off << "\t" << S << "\n";  //Note: the order and content of these parameters may change
       }
 	  
       else if (gcode_line_remainder < time_remaining/gcl_time(gcl))

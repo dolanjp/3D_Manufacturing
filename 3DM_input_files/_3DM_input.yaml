@@ -25,6 +25,9 @@ ANONYMOUS:
     Mesh Model Input File Name: ../model/500micronsX500micronsX200microns.dmg
     Write ASCII VTK Files: true
     PUMI Output File Name: single_processor_consol_test.vtk
+    #Additional Element Block Associations can be added for additional regions in the model
+    #   for example:
+    #   Element Block Associations: [['175', '5', '6'], [Powder_Region, Solid_Region, Thermocouple_Region]]
     Element Block Associations: [['175', '5'], [Powder_Region, Solid_Region]]
     Side Set Associations: [['164', '36'], [Top_Surface, Bottom_Surface]]
     Separate Evaluators by Element Block: true
