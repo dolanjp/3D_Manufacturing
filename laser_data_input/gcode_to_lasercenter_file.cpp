@@ -126,17 +126,11 @@ void interp_write(char* output_filepath)
   double time_remaining = time_step;  //initialize time counter
   int gcl = 1;  //gcode line counter
   
-  //Warning: The Laser Power (Parameter "S") is hard-coded to 1 until the power_fraction is changed in the AMP and 3Dmfg code.
-  // After the change, the laser power will be specified in the laser center file (in watts) instead of the materials file
-  int hard_coded_laser_power = 1;
-  
   ofstream outfile;
   outfile.open( output_filepath, ofstream::out | ofstream::trunc);
   
   //Write the first position at time = 0
-  S = hard_coded_laser_power; //remove after specified Albany code change is made
-  //remove "Laser_On_Off" from file print once 3DM model is up and running
-  outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << Laser_On_Off << "\t" << S << "\n";  //Note: the order and content of these parameters may change
+  outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << S << "\n";  //Note: the order and content of these parameters may change
 
   while (gcl < line_count) //Note: line_count is incremented one past the end of the gcode_data list
     {  
@@ -149,9 +143,7 @@ void interp_write(char* output_filepath)
         time_remaining = time_step;
         T = T + time_step;
         
-	  S = hard_coded_laser_power; //remove after specified Albany code change is made
-      //remove "Laser_On_Off" from file print once 3DM model is up and running
-	  outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << Laser_On_Off << "\t" << S << "\n";  //Note: the order and content of these parameters may change
+	    outfile << fixed << setprecision(10)  << T << "\t" << X << "\t" << Y << "\t" << S << "\n";  //Note: the order and content of these parameters may change
       }
 	  
       else if (gcode_line_remainder < time_remaining/gcl_time(gcl))
